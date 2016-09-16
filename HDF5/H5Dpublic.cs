@@ -580,7 +580,7 @@ namespace HDF.PInvoke
         SuppressUnmanagedCodeSecurity, SecuritySafeCritical]
         public static extern herr_t read
             (hid_t dset_id, hid_t mem_type_id, hid_t mem_space_id,
-            hid_t file_space_id, hid_t plist_id, [Out] IntPtr buf);
+            hid_t file_space_id, hid_t plist_id, IntPtr buf);
 
 #if HDF5_VER1_10
 
@@ -620,7 +620,7 @@ namespace HDF.PInvoke
         SuppressUnmanagedCodeSecurity, SecuritySafeCritical]
         public static extern herr_t scatter
             (scatter_func_t op, IntPtr op_data, hid_t type_id,
-            hid_t dst_space_id, [Out] IntPtr dst_buf);
+            hid_t dst_space_id, IntPtr dst_buf);
 
         /// <summary>
         /// Changes the sizes of a dataset’s dimensions.
@@ -635,6 +635,20 @@ namespace HDF.PInvoke
             CallingConvention = CallingConvention.Cdecl),
         SuppressUnmanagedCodeSecurity, SecuritySafeCritical]
         public static extern herr_t set_extent(hid_t dset_id, hsize_t[] size);
+
+        /// <summary>
+        /// Changes the sizes of a dataset’s dimensions.
+        /// See https://www.hdfgroup.org/HDF5/doc/RM/RM_H5D.html#Dataset-SetExtent
+        /// </summary>
+        /// <param name="dset_id">Dataset identifier</param>
+        /// <param name="size">Array containing the new magnitude of each
+        /// dimension of the dataset.</param>
+        /// <returns>Returns a non-negative value if successful; otherwise
+        /// returns a negative value.</returns>
+        [DllImport(Constants.DLLFileName, EntryPoint = "H5Dset_extent",
+            CallingConvention = CallingConvention.Cdecl),
+        SuppressUnmanagedCodeSecurity, SecuritySafeCritical]
+        public static extern herr_t set_extent(hid_t dset_id, hsize_t* size);
 
         /// <summary>
         /// Determines the number of bytes required to store variable-length

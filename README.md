@@ -1,37 +1,83 @@
-# Getting started with HDF.PInvoke
+![AppVeyor Project status badge](https://ci.appveyor.com/api/projects/status/github/HDFGroup/HDF.PInvoke?branch=master&svg=true)
 
-HDF.PInvoke is part of [HDF5](https://www.hdfgroup.org/HDF5/). It is subject to the *same* terms and conditions as HDF5. Please review [COPYING](COPYING) or [http://www.hdfgroup.org/HDF5/doc/Copyright.html](http://www.hdfgroup.org/HDF5/doc/Copyright.html) for the details. If you have any questions, please [contact us](http://www.hdfgroup.org/about/contact.html).
 
-### Status
+# What it is (not)
 
-We have fairly complete coverage of the HDF5 1.8.16 API, and the declarations for HDF5 1.10 are under development.
-The easiest way to get started with ``HDF.PInvoke`` is to use the [NuGet package](https://www.nuget.org/packages/HDF.PInvoke/):
+HDF.PInvoke is a collection of [PInvoke](https://en.wikipedia.org/wiki/Platform_Invocation_Services)
+signatures for the [HDF5 C-API](https://www.hdfgroup.org/HDF5/doc/RM/RM_H5Front.html).
+It's practically *code-free*, which means we can blame all the bugs on Microsoft or [The HDF Group](https://www.hdfgroup.org/) :smile:
+
+It is **not** a high-level .NET interface for HDF5. "It's the [GCD](https://en.wikipedia.org/wiki/Greatest_common_divisor)
+of .NET bindings for HDF5, not the [LCM](https://en.wikipedia.org/wiki/Least_common_multiple)." :bowtie:
+
+## Current Release Version(s)
+
+| HDF5 Release Version                                                   | Assembly Version | Assembly File Version | Git Tag |
+| ---------------------------------------------------------------------- | ---------------- | --------------------------------------------------------------- | ------- | ------- |
+| [1.8.17](https://www.hdfgroup.org/HDF5/release/obtain5.html)           | 1.8.17.0         | [1.8.17.8](https://www.nuget.org/packages/HDF.PInvoke/1.8.17.8) | v1.8.17.8  |
+| [1.10.0-patch1](https://www.hdfgroup.org/HDF5/release/obtain5110.html) | 1.10.0.0         | [1.10.0.4](https://www.nuget.org/packages/HDF.PInvoke/1.10.0.4) | v1.10.0.4 |
+
+[How "stuff" is versioned.](../../wiki/Versioning-and-Releases)
+
+## Quick Install:
+
+To install the latest HDF.PInvoke 1.8, run the following command in the
+[Package Manager Console](https://docs.nuget.org/docs/start-here/using-the-package-manager-console)
 ```
-Install-Package HDF.PInvoke
+    Install-Package HDF.PInvoke -Version 1.8.17.8
 ```
-If you want to get your hands dirty, clone or fork the repo, and read on!
+To install the latest HDF.PInvoke 1.10, run the following command in the
+[Package Manager Console](https://docs.nuget.org/docs/start-here/using-the-package-manager-console)
+```
+    Install-Package HDF.PInvoke -Version 1.10.0.4
+```
 
-Don't forget to check out the [Cookbook](https://github.com/HDFGroup/HDF.PInvoke/wiki/Cookbook) for a few examples.
+# Prerequisites
 
-### How you can help
+The ``HDF.PInvoke.dll`` managed assembly depends on the following native DLLs (32-bit and 64-bit):
+- HDF5 core API, ``hdf5.dll``
+- HDF5 high-level APIs, ``hdf5_hl.dll``
+- Gzip compression, ``zlib.dll``
+- Szip compression, ``szip.dll``
+- The C-runtime of the Visual Studio version used to build the former, e.g., ``msvcr120.dll`` for Visual Studio 2013
 
-* Build it and run the tests
-* Submit issues
-* Submit pull requests addressing issues
-* Make suggestions on how to better organize, document, and maintain the software
-* Spread the word
-* ...
+All native dependencies, built with [thread-safety enabled](https://www.hdfgroup.org/hdf5-quest.html#tsafe),
+are included in the NuGet packages,
+**except** the Visual Studio C-runtime, which is available from Microsoft as [Visual C++ Redistributable Packages for Visual Studio 2013](https://www.microsoft.com/en-us/download/details.aspx?id=40784). In the unlikely event that
+they aren't already installed on your system, go get 'em!
+(See [this link](https://msdn.microsoft.com/en-us/library/ms235299.aspx) for the rationale behind not
+distributing the Visual Studio C-runtime in the NuGet package.)
 
-### Dependencies
+## The DLL Resolution Process
 
-HDF5 binaries can be obtained from [here](https://www.hdfgroup.org/HDF5/release/obtain5.html). The ``HDF.PInvoke.dll`` managed assemblies, located in ``bin\[Debug,Release]``, depend on the unmanaged DLLs ``hdf5.dll``, ``hdf5_hl.dll``, ``szip.dll``, and ``zlib.dll`` for the corresponding processor architecture.
+On the first call to an ``H5*`` function, the application's configuration file
+(e.g., ``YourApplication.exe.config``) is searched for the key ``NativeDependenciesAbsolutePath``,
+whose value, if found, is added to the DLL-search path. If this key is not
+specified in the application's config-file, then the ``HDF.PInvoke.dll`` assembly
+detects the processor architecture (32- or 64-bit) of the hosting process and expects
+to find the native DLLs in the ``bin32`` or ``bin64`` subdirectories, relative to its
+location. For example, if ``HDF.PInvoke.dll`` lives in ``C:\bin``, it looks for
+the native DLLs in ``C:\bin\bin32`` and ``C:\bin\bin64``.
+Finally, the ``PATH`` environment variable of the running process is searched for other locations,
+such as installed by the [HDF5 installers](https://www.hdfgroup.org/HDF5/).
 
-Upon the first call to an ``H5*`` function, the application's configuration file (e.g., ``YourApplication.exe.config``) is searched for the key ``NativeDependenciesAbsolutePath``, whose value, if found, is added to the DLL-search path. If this key is not specified in the application's config-file, then the ``HDF.PInvoke.dll`` assembly detects the processor architecture (32- or 64-bit) of the hosting process and expects the unmanaged DLLs in the ``bin32`` or ``bin64`` subdirectories relative to its own location. For example, if ``HDF.PInvoke.dll`` lives in ``C:\bin``, it expects the unmanaged DLLs in ``C:\bin\bin32`` and ``C:\bin\bin64``.
+# Two Major HDF5 Versions for the Price of One (Free)
 
-Changing the DLL-search path is done using the ``PATH`` variable of the running process. An attempt to modify the running processes ``PATH`` environment is made, if that fails, the native binaries will be loaded from their default places (as hopefully installed by the HDF5-Installer).
+The HDF Group currently maintains two major HDF5 release families, HDF5 1.8 and HDF5 1.10. The Visual Studio Solution is set up to build the `HDF.PInvoke.dll` .NET assemblies for the `"Any CPU"` platform in the `Debug` and `Release` configurations. Support for the HDF5 1.8 or 1.10 API is toggled via the `HDF5_VER1_10` conditional compilation symbol in the *Build* properties of the *HDF.PInvoke* and *UnitTest* projects. 
 
-### Structure
+# License
 
-Currently, the Visual Studio Solution has two projects, ``HDF.PInvoke`` and ``UnitTests``, which should be fairly self-explanatory. For each API (H5, H5A, etc.) there is one file, which contains the corresponding PInvoke declarations. They follow closely the native C-headers. Finally, there's one folder for each API in the ``UnitTests`` project with one file (of ``TestMethod`` definitions) for each API call.
+HDF.PInvoke is part of [HDF5](https://www.hdfgroup.org/HDF5/). It is subject to
+the *same* terms and conditions as HDF5. Please review [COPYING](COPYING) or
+[http://www.hdfgroup.org/HDF5/doc/Copyright.html](http://www.hdfgroup.org/HDF5/doc/Copyright.html)
+for the details. If you have any questions, please [contact us](http://www.hdfgroup.org/about/contact.html).
 
-![Visual Studio Solution](/images/HDF.PInvoke.jpg)
+# Supporting HDF.PInvoke
+
+The best way to support HDF.Pinvoke is to contribute to it either by reporting
+bugs, writing documentation (e.g., the [cookbook](https://github.com/HDFGroup/HDF.PInvoke/wiki/Cookbook)),
+or sending pull requests.
+
+***
+
+![The HDF Group logo](https://github.com/HDFGroup/HDF.PInvoke/blob/master/images/The%20HDF%20Group.jpg)

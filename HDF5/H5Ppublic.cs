@@ -370,8 +370,8 @@ namespace HDF.PInvoke
         SuppressUnmanagedCodeSecurity, SecuritySafeCritical]
         public static extern herr_t get_append_flush
             (hid_t dapl_id, uint ndims,
-            [MarshalAs(UnmanagedType.LPArray)][Out] hsize_t[] boundary,
-            H5D.append_cb_t func, ref IntPtr udata);
+            [In][Out]hsize_t[] boundary,
+            ref H5D.append_cb_t func, ref IntPtr udata);
 
 #endif
 
@@ -496,7 +496,7 @@ namespace HDF.PInvoke
             CallingConvention = CallingConvention.Cdecl),
         SuppressUnmanagedCodeSecurity, SecuritySafeCritical]
         public static extern int get_chunk
-            (hid_t plist_id, int max_ndims, [Out] hsize_t[] dims);
+            (hid_t plist_id, int max_ndims, [In][Out]hsize_t[] dims);
 
         /// <summary>
         /// Retrieves the raw data chunk cache parameters.
@@ -637,7 +637,7 @@ namespace HDF.PInvoke
             CallingConvention = CallingConvention.Cdecl),
         SuppressUnmanagedCodeSecurity, SecuritySafeCritical]
         public static extern ssize_t get_data_transform
-            (hid_t plist_id, StringBuilder expression, size_t size);
+            (hid_t plist_id, [In][Out]StringBuilder expression, size_t size);
 
         /// <summary>
         /// Returns low-lever driver identifier.
@@ -697,7 +697,7 @@ namespace HDF.PInvoke
             CallingConvention = CallingConvention.Cdecl),
         SuppressUnmanagedCodeSecurity, SecuritySafeCritical]
         public static extern ssize_t get_efile_prefix
-            (hid_t dapl, [Out] byte[] prefix, size_t size);
+            (hid_t dapl, [In][Out]byte[] prefix, size_t size);
 
         /// <summary>
         /// Retrieves the external link traversal file access flag from the
@@ -776,7 +776,7 @@ namespace HDF.PInvoke
             CallingConvention = CallingConvention.Cdecl),
         SuppressUnmanagedCodeSecurity, SecuritySafeCritical]
         public static extern ssize_t get_elink_prefix
-            (hid_t lapl_id, [Out] byte[] prefix, size_t size);
+            (hid_t lapl_id, byte[] prefix, size_t size);
 
         /// <summary>
         /// Queries data required to estimate required local heap or object
@@ -815,7 +815,7 @@ namespace HDF.PInvoke
             CallingConvention = CallingConvention.Cdecl),
         SuppressUnmanagedCodeSecurity, SecuritySafeCritical]
         public static extern herr_t get_external
-            (hid_t plist, uint idx, size_t name_size, [Out] byte[] name,
+            (hid_t plist, uint idx, size_t name_size, [In][Out]byte[] name,
             ref off_t offset, ref hsize_t size);
 
         /// <summary>
@@ -1025,8 +1025,34 @@ namespace HDF.PInvoke
         SuppressUnmanagedCodeSecurity, SecuritySafeCritical]
         public static extern H5Z.filter_t get_filter
             (hid_t plist_id, uint idx, ref uint flags, ref size_t cd_nelmts,
-            [Out] uint[] cd_values, size_t namelen, [Out] byte[] name,
+            uint[] cd_values, size_t namelen, [In][Out]byte[] name,
             ref uint filter_config);
+
+
+        /// <summary>
+        /// Returns information about a filter in a pipeline.
+        /// See https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-GetFilter2
+        /// </summary>
+        /// <param name="plist_id">Dataset or group creation property list 
+        /// identifier.</param>
+        /// <param name="idx">Sequence number within the filter pipeline of the
+        /// filter for which information is sought.</param>
+        /// <param name="flags">Bit vector specifying certain general
+        /// properties of the filter.</param>
+        /// <param name="cd_nelmts">Number of elements in
+        /// <paramref name="cd_values"/>.</param>
+        /// <param name="cd_values">Auxiliary data for the filter.</param>
+        /// <param name="namelen">Anticipated number of characters in
+        /// <paramref name="name"/>.</param>
+        /// <param name="name">Name of the filter.</param>
+        /// <param name="filter_config">Bit field.</param>
+        /// <returns>Returns the filter identifier if successful. Otherwise
+        /// returns a negative value.</returns>
+        [DllImport(Constants.DLLFileName, EntryPoint = "H5Pget_filter2",
+            CallingConvention = CallingConvention.Cdecl),
+        SuppressUnmanagedCodeSecurity, SecuritySafeCritical]
+        public static extern H5Z.filter_t get_filter2(hid_t plist_id, uint filter, ref uint flags, ref hsize_t cd_nelmts, uint* cd_values, size_t namelen, string name, ref uint filter_config);
+        
 
         /// <summary>
         /// Returns information about the specified filter.
@@ -1051,8 +1077,8 @@ namespace HDF.PInvoke
         SuppressUnmanagedCodeSecurity, SecuritySafeCritical]
         public static extern herr_t get_filter_by_id
             (hid_t plist_id, H5Z.filter_t filter_id, ref uint flags,
-            ref size_t cd_nelmts, [Out] uint[] cd_values, size_t namelen,
-            [Out] byte[] name, ref uint filter_config);
+            ref size_t cd_nelmts, [In][Out]uint[] cd_values, size_t namelen,
+            [In][Out]byte[] name, ref uint filter_config);
 
         /// <summary>
         /// Returns garbage collecting references setting.
@@ -1238,7 +1264,7 @@ namespace HDF.PInvoke
             CharSet = CharSet.Ansi),
         SuppressUnmanagedCodeSecurity, SecuritySafeCritical]
         public static extern herr_t get_mdc_log_options
-            (hid_t fapl_id, ref hbool_t is_enabled, StringBuilder location,
+            (hid_t fapl_id, ref hbool_t is_enabled, [In][Out]StringBuilder location,
             ref size_t location_size, ref hbool_t start_on_access);
 
 #endif
@@ -1350,7 +1376,7 @@ namespace HDF.PInvoke
             CallingConvention = CallingConvention.Cdecl),
         SuppressUnmanagedCodeSecurity, SecuritySafeCritical]
         public static extern herr_t get_object_flush_cb
-            (hid_t fapl_id, H5F.flush_cb_t func, ref IntPtr udata);
+            (hid_t fapl_id, ref H5F.flush_cb_t func, ref IntPtr udata);
 
 #endif
 
@@ -1577,7 +1603,7 @@ namespace HDF.PInvoke
             CallingConvention = CallingConvention.Cdecl),
         SuppressUnmanagedCodeSecurity, SecuritySafeCritical]
         public static extern ssize_t get_virtual_dsetname
-            (hid_t dcpl_id, size_t index, [Out] byte[] name, size_t size);
+            (hid_t dcpl_id, size_t index, byte[] name, size_t size);
 
         /// <summary>
         /// Gets the name of a source dataset used in the mapping.
@@ -1599,7 +1625,7 @@ namespace HDF.PInvoke
             CallingConvention = CallingConvention.Cdecl),
         SuppressUnmanagedCodeSecurity, SecuritySafeCritical]
         public static extern ssize_t get_virtual_dsetname
-            (hid_t dcpl_id, size_t index, StringBuilder name, size_t size);
+            (hid_t dcpl_id, size_t index, [In][Out]StringBuilder name, size_t size);
 
         /// <summary>
         /// Gets the filename of a source dataset used in the mapping.
@@ -1620,7 +1646,7 @@ namespace HDF.PInvoke
             CallingConvention = CallingConvention.Cdecl),
         SuppressUnmanagedCodeSecurity, SecuritySafeCritical]
         public static extern ssize_t get_virtual_filename
-            (hid_t dcpl_id, size_t index, StringBuilder name, size_t size);
+            (hid_t dcpl_id, size_t index, [In][Out]StringBuilder name, size_t size);
 
         /// <summary>
         /// Returns the maximum number of missing source files and/or datasets
@@ -2063,6 +2089,21 @@ namespace HDF.PInvoke
         public static extern herr_t set_chunk
             (hid_t plist_id, int ndims,
             [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 1)]hsize_t[] dims);
+
+        /// <summary>
+        /// Sets the size of the chunks used to store a chunked layout dataset.
+        /// See https://www.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#Property-SetChunk
+        /// </summary>
+        /// <param name="plist_id">Dataset creation property list identifier.</param>
+        /// <param name="ndims">The number of dimensions of each chunk.</param>
+        /// <param name="dims">An array defining the size, in dataset elements,
+        /// of each chunk.</param>
+        /// <returns>Returns a non-negative value if successful; otherwise
+        /// returns a negative value.</returns>
+        [DllImport(Constants.DLLFileName, EntryPoint = "H5Pset_chunk",
+            CallingConvention = CallingConvention.Cdecl),
+        SuppressUnmanagedCodeSecurity, SecuritySafeCritical]
+        public static extern herr_t set_chunk(hid_t plist_id, int ndims, hsize_t* dims);
 
 #if HDF5_VER1_10
 

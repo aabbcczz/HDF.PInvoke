@@ -507,7 +507,7 @@ namespace HDF.PInvoke
             CallingConvention = CallingConvention.Cdecl),
         SuppressUnmanagedCodeSecurity, SecuritySafeCritical]
         public extern static ssize_t get_name(
-            hid_t attr_id, size_t size, [Out] byte[] name);
+            hid_t attr_id, size_t size, [In][Out]byte[] name);
 
         /// <summary>
         /// Gets an attribute name.
@@ -526,7 +526,7 @@ namespace HDF.PInvoke
             CallingConvention = CallingConvention.Cdecl),
         SuppressUnmanagedCodeSecurity, SecuritySafeCritical]
         public extern static ssize_t get_name(
-            hid_t attr_id, size_t size, StringBuilder name);
+            hid_t attr_id, size_t size, [In][Out]StringBuilder name);
 
         /// <summary>
         /// Gets an attribute name, by attribute index position.
@@ -550,7 +550,7 @@ namespace HDF.PInvoke
         public extern static ssize_t get_name_by_idx
             (hid_t loc_id, byte[] obj_name,
             H5.index_t idx_type, H5.iter_order_t order, hsize_t n,
-            [Out] byte[] name, size_t size, hid_t lapl_id = H5P.DEFAULT);
+            [In][Out]byte[] name, size_t size, hid_t lapl_id = H5P.DEFAULT);
 
         /// <summary>
         /// Gets an attribute name, by attribute index position.
@@ -576,7 +576,32 @@ namespace HDF.PInvoke
         public extern static ssize_t get_name_by_idx
             (hid_t loc_id, string obj_name,
             H5.index_t idx_type, H5.iter_order_t order, hsize_t n,
-            StringBuilder name, size_t size, hid_t lapl_id = H5P.DEFAULT);
+            [In][Out]StringBuilder name, size_t size, hid_t lapl_id = H5P.DEFAULT);
+        
+        
+        /// <summary>
+        /// Gets an attribute name, by attribute index position.
+        /// See https://www.hdfgroup.org/HDF5/doc/RM/RM_H5A.html#Annot-GetNameByIdx
+        /// </summary>
+        /// <param name="loc_id">Location of object to which attribute is
+        /// attached</param>
+        /// <param name="obj_name">Name of object to which attribute is
+        /// attached, relative to location</param>
+        /// <param name="idx_type">Type of index</param>
+        /// <param name="order">Index traversal order</param>
+        /// <param name="n">Attribute’s position in index</param>
+        /// <param name="name">Attribute name</param>
+        /// <param name="size">Size, in bytes, of attribute name</param>
+        /// <param name="lapl_id">Link access property list</param>
+        /// <returns>Returns attribute name size, in bytes, if successful;
+        /// otherwise returns a negative value.</returns>
+        /// <remarks>ASCII strings ONLY!</remarks>
+        [DllImport(Constants.DLLFileName, EntryPoint = "H5Aget_name_by_idx",
+            CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl),
+        SuppressUnmanagedCodeSecurity, SecuritySafeCritical]
+        public extern static ssize_t get_name_by_idx(hid_t loc_id, string obj_name,
+            H5.index_t idx_type, H5.iter_order_t order, hsize_t n, IntPtr name,
+            size_t size, hid_t lapl_id);
 
         /// <summary>
         /// Gets a copy of the dataspace for an attribute.

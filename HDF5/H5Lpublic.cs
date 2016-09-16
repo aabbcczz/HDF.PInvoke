@@ -286,7 +286,7 @@ namespace HDF.PInvoke
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate ssize_t query_func_t
         (byte[] link_name, IntPtr lnkdata, size_t lnkdata_size,
-        [Out] IntPtr buf, size_t buf_size);
+        IntPtr buf, size_t buf_size);
 
         /// <summary>
         /// Callback for querying the link
@@ -302,7 +302,7 @@ namespace HDF.PInvoke
             CharSet = CharSet.Ansi)]
         public delegate ssize_t query_func_ascii_t
         (string link_name, IntPtr lnkdata, size_t lnkdata_size,
-        [Out] IntPtr buf, size_t buf_size);
+        IntPtr buf, size_t buf_size);
 
         /// <summary>
         /// User-defined link types
@@ -842,7 +842,7 @@ namespace HDF.PInvoke
         SuppressUnmanagedCodeSecurity, SecuritySafeCritical]
         public extern static ssize_t get_name_by_idx
             (hid_t loc_id, byte[] group_name, H5.index_t idx_type,
-            H5.iter_order_t order, hsize_t n, [Out] byte[] name, size_t size,
+            H5.iter_order_t order, hsize_t n, [In][Out]byte[] name, size_t size,
             hid_t lapl_id = H5P.DEFAULT);
 
         /// <summary>
@@ -868,8 +868,33 @@ namespace HDF.PInvoke
         SuppressUnmanagedCodeSecurity, SecuritySafeCritical]
         public extern static ssize_t get_name_by_idx
             (hid_t loc_id, string group_name, H5.index_t idx_type,
-            H5.iter_order_t order, hsize_t n, [Out] StringBuilder name, size_t size,
+            H5.iter_order_t order, hsize_t n, [In][Out]StringBuilder name, size_t size,
             hid_t lapl_id = H5P.DEFAULT);
+
+        /// <summary>
+        /// Retrieves name of the nth link in a group, according to the order
+        /// within a specified field or index.
+        /// See https://www.hdfgroup.org/HDF5/doc/RM/RM_H5L.html#Link-GetNameByIdx
+        /// </summary>
+        /// <param name="loc_id">File or group identifier specifying location
+        /// of subject group</param>
+        /// <param name="group_name">Name of subject group</param>
+        /// <param name="idx_type">Index or field which determines the order</param>
+        /// <param name="order">Order within field or index</param>
+        /// <param name="n">Link for which to retrieve information</param>
+        /// <param name="name">Buffer in which link value is returned</param>
+        /// <param name="size">Size in bytes of <paramref name="name"/></param>
+        /// <param name="lapl_id">Link access property list</param>
+        /// <returns>Returns the size of the link name if successful; otherwise
+        /// returns a negative value.</returns>
+        /// <remarks>ASCII strings ONLY!</remarks>
+        [DllImport(Constants.DLLFileName, EntryPoint = "H5Lget_name_by_idx",
+            CallingConvention = CallingConvention.Cdecl,
+            CharSet = CharSet.Ansi),
+        SuppressUnmanagedCodeSecurity, SecuritySafeCritical]
+        public extern static ssize_t get_name_by_idx(hid_t loc_id, string group_name,
+            H5.index_t idx_type, H5.iter_order_t order, hsize_t n,
+            IntPtr name /*out*/, size_t size, hid_t lapl_id);        
 
         /// <summary>
         /// Returns the value of a symbolic link.
@@ -888,7 +913,7 @@ namespace HDF.PInvoke
             CallingConvention = CallingConvention.Cdecl),
         SuppressUnmanagedCodeSecurity, SecuritySafeCritical]
         public extern static herr_t get_val
-            (hid_t loc_id, byte[] name, [Out] IntPtr buf, size_t size,
+            (hid_t loc_id, byte[] name, IntPtr buf, size_t size,
             hid_t lapl_id = H5P.DEFAULT);
 
         /// <summary>
@@ -910,7 +935,7 @@ namespace HDF.PInvoke
             CharSet = CharSet.Ansi),
         SuppressUnmanagedCodeSecurity, SecuritySafeCritical]
         public extern static herr_t get_val
-            (hid_t loc_id, string name, [Out] IntPtr buf, size_t size,
+            (hid_t loc_id, string name, IntPtr buf, size_t size,
             hid_t lapl_id = H5P.DEFAULT);
 
         /// <summary>
@@ -934,7 +959,7 @@ namespace HDF.PInvoke
         SuppressUnmanagedCodeSecurity, SecuritySafeCritical]
         public extern static herr_t get_val_by_idx
             (hid_t loc_id, byte[] group_name, H5.index_t idx_type,
-            H5.iter_order_t order, hsize_t n, [Out] IntPtr buf, size_t size,
+            H5.iter_order_t order, hsize_t n, IntPtr buf, size_t size,
             hid_t lapl_id = H5P.DEFAULT);
 
         /// <summary>
@@ -960,7 +985,7 @@ namespace HDF.PInvoke
         SuppressUnmanagedCodeSecurity, SecuritySafeCritical]
         public extern static herr_t get_val_by_idx
             (hid_t loc_id, string group_name, H5.index_t idx_type,
-            H5.iter_order_t order, hsize_t n, [Out] IntPtr buf, size_t size,
+            H5.iter_order_t order, hsize_t n, IntPtr buf, size_t size,
             hid_t lapl_id = H5P.DEFAULT);
 
         /// <summary>

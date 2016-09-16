@@ -18,7 +18,7 @@ using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
 
-using hbool_t = System.Int32;
+using hbool_t = System.UInt32;
 using herr_t = System.Int32;
 using hsize_t = System.UInt64;
 using htri_t = System.Int32;
@@ -746,7 +746,7 @@ namespace HDF.PInvoke
             CharSet = CharSet.Ansi),
         SuppressUnmanagedCodeSecurity, SecuritySafeCritical]
         public static extern herr_t enum_nameof
-            (hid_t dtype_id, IntPtr value, StringBuilder name, size_t size);
+            (hid_t dtype_id, IntPtr value, [In][Out]StringBuilder name, size_t size);
 
         /// <summary>
         /// Returns the value corresponding to a specified member of an

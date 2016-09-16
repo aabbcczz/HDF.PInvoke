@@ -7,10 +7,10 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 [assembly: AssemblyTitle("HDF.PInvoke")]
 [assembly: AssemblyDescription(".NET interop with native HDF5 libraries")]
-[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyConfiguration("Release")]
 [assembly: AssemblyCompany("The HDF Group")]
 [assembly: AssemblyProduct("HDF.PInvoke")]
-[assembly: AssemblyCopyright("Copyright ©  2015")]
+[assembly: AssemblyCopyright("Copyright © 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -37,9 +37,9 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 #if HDF5_VER1_10
-[assembly: AssemblyVersion("1.10.0.*")]
-[assembly: AssemblyFileVersion("1.10.0.*")]
+[assembly: AssemblyVersion("1.10.0.0")]
+[assembly: AssemblyFileVersion("1.10.0.4")]
 #else
-[assembly: AssemblyVersion("1.8.17.*")]
-[assembly: AssemblyFileVersion("1.8.17.*")]
+[assembly: AssemblyVersion("1.8.17.0")]
+[assembly: AssemblyFileVersion("1.8.17.8")]
 #endif
